@@ -3,7 +3,7 @@
 #include<map>
 using namespace std;
 
-//对应2
+//*对应2
 //需求：希望定义一个类型，前边这部分固定不变，是std::map<std::string, 类型自己制定>
 //在c++98时代
 template<typename T>
@@ -15,7 +15,7 @@ public:
 };
 ///////////////////////////////////////////////
 
-//对应3
+//*对应3
 //在c++2011时代
 template <typename T>
 using str_map_t = std::map<std::string, int>;//str_map_t是类型的别名。
@@ -31,30 +31,35 @@ using map_u =std::map<std::string, int>;
 typedef int (*pfuncType)(int, int);	//用typedef定义一个函数指针；
 using pfun = int (*)(int, int);		//用using定义一个函数指针；
 
-//对应4
-//二：一个函数指针举例说明
+//*对应4
+//一个函数指针举例说明
 template<typename T>
-using myfunc_M=int(*)(T,T);//定义类型模板，是个函数指针模板。//注意myfunc_M现在是以哦个类型哦。
+using myfunc_M=T(*)(T,T);//定义类型模板，是个函数指针模板。//注意myfunc_M现在是以哦个类型哦。
 
 int Realfunc(int i, int j)
 {
 	return 1;
 }
 
-
+//二：显示指定模板参数
+//*对应5
+template<typename T1, typename T2, typename T3>
+T1 sum(T2 i, T3 j)
+{
+	T1 result = i + j;
+	return result;
+}
 
 int main()
 {
-	//对应4
+
+	//对应4：如何调用函数指针。
 	myfunc_M<int> mypfunc; //myfunc_M<int>是一个函数指针类型。
 						   //myPfunc是一个函数指针.
-	
+
 	mypfunc = Realfunc;//把函数地址付给函数指针变量。
 	cout << Realfunc(199, 288) << endl;//1
 	
-
-
-
 
 	//对应3
 	str_map_t<int> mymap1;
@@ -66,7 +71,7 @@ int main()
 
 
 //一：using定义模板别名
-	//typedef：一般用来定义类型别名
+	//用typedef定义一个类型别名：一般用来定义类型别名。
 	typedef unsigned int uint_t;//相当于给unsigned int类型起了个别名unint_:t
 	//std::map<std::string,int>
 
@@ -79,9 +84,16 @@ int main()
 	map_s_s mymap2;
 	mymap2.insert({ "first","firstone"});
 	
+	//总结：
+	//using中使用这种模板，既不是类模板，也不是函数模板，我们可以看成是一种新的模板类型：类型模板（模板别名）；
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	//二：显示指定模板参数
+	//对应5：显式指定模板参数的调用
+	auto result = sum<double,double,double>(2000000000, 20000000000);//这里必须显示地给出类型，因为二十个亿不能
+	//推断出来，只能用double的显示给出。
+	cout << result << endl;
 
-	
 	
 }
 
