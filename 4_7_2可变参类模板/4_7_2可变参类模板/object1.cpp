@@ -1,12 +1,11 @@
-//可变参类模板：用递归方法解开参数包
+//可变参类模板：用递归继承方法解开参数包
 #include<iostream>
 using namespace std;
 
 
 //可变参类模板：润许模板定义中含有0到任意个模板参数；
 //用递归继承方式展开参数包
-template<typename...Args>
-class myclass {};//主模版
+template<typename...Args>class myclass {};//主模版
 
 template<>
 class myclass<>//0个参数的特化版本
