@@ -1,9 +1,10 @@
+//可变参类模板：用递归方法解开参数包
 #include<iostream>
 using namespace std;
 
 
-
 //可变参类模板：润许模板定义中含有0到任意个模板参数；
+//用递归继承方式展开参数包
 template<typename...Args>
 class myclass {};//主模版
 
@@ -25,7 +26,8 @@ public:
 	{
 		printf("myclass::myclass()构造函数执行了,this = %p\n",this);
 	}
-	myclass(T First, Other...args) :m_i(First), myclass<Other...>(args...)//调用父类的构造函数myclass<Other...>(args...)
+	//加入一个有参构造函数
+	myclass(T First, Other...args) :m_i(First), myclass<Other...>(args...)//调用父类的构造函数myclass<Other...>一包类型，一包参数(args...)
 	{
 		cout << "m_i=" << m_i << endl;
 	}

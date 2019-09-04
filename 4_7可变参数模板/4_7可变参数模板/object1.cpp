@@ -1,8 +1,10 @@
+//一：可变参函数模板
+
 #include<iostream>
 #include<assert.h>
 using namespace std;
 
-//一：可变惨函数模板
+//一：可变参函数模板
 //可变参数模板的参数包打开方法
 void myfunc()
 {
