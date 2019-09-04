@@ -45,10 +45,6 @@ void myfuncprintout(const T& first, const U& ...args)
 	myfuncprintout(args...);
 }
 
-
-
-
-
 int main()
 {
 	double x = 2.71828;
