@@ -27,8 +27,10 @@ int main()
 
 	auto pp5 = make_shared<string>(8, 'a');//这个auto pp5等价于shared_ptr<string>pp3 = make_shared<string>(5, 'a'); 他能自动推断出类型。
 	cout << pp5.use_count() << endl;;//显示指针之乡的数量。//1
-	auto pp6 = pp5;//又一新的指针指向.
-	cout << pp6.use_count();//2
+	auto pp6(pp5);//又一新的指针指向.
+	cout << pp6.use_count()<<endl;//2
+	auto pp7 = pp5;
+	cout << pp7.use_count() << endl;//3
 
 
 	//auto  p = makes(99);//99
