@@ -14,6 +14,18 @@ shared_ptr<string> makes(string value1)//
 	return shared_ptr<string>(new string(value1));	 //返回一个智能指针//可现实的用int*创建shared_ptr<int>
 }
 
+void swap(shared_ptr<int>&a, shared_ptr<int>&b)//把智能指针当作实参往函数里转递；
+{
+	shared_ptr<int> temp;
+	temp = a;
+	a = b;
+	b = temp;
+}
+
+shared_ptr<int>myfunc(shared_ptr<int>& temp)//作为函数的返回值
+{
+	return temp;
+}
 
 
 int main()
@@ -40,6 +52,27 @@ int main()
 	cin >> valueeingeben;
 	auto  p = makes(valueeingeben);
 	cout << "Sie Haben: " << *p <<" Eingegeben."<< endl;//makes = hello
+
+
+	auto a = make_shared<int>(99);
+	auto b = make_shared<int>(100);
+	//int a = 99;
+	//int b = 100;
+
+	//把智能指针当作实参往函数里转递
+	swap(a, b);
+	cout << "a = " << *a << " b = " << *b << endl;
+
+	//作为函数的返回值；
+	auto pfunc = myfunc(pp4);
+	cout << "作为函数返回值为： "<<*pfunc << endl;
+	cout<<"一共有都少指针指向pp4: "<<pp4.use_count()<<endl;
+
+	//指针基础举例：
+	auto ppint1 = make_shared<int>(100);
+	auto ppint2 = make_shared<int>(100);
+	ppint1 = ppint2;
+	cout << "ppint1 指针数量为: " << ppint1.use_count() << " ppint2 指针数量为: " << ppint2.use_count() << endl;
 
 
 	//shared_ptr<int> ps = makes(99);//99
