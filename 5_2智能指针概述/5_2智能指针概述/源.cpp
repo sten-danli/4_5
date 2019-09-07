@@ -73,6 +73,8 @@ int main()
 	auto ppint2 = make_shared<int>(100);
 	ppint1 = ppint2;
 	cout << "ppint1 指针数量为: " << ppint1.use_count() << " ppint2 指针数量为: " << ppint2.use_count() << endl;
+	//给ppint1赋值会让ppint1指向ppint2指向的对象，该对象引用计数变成2，而原来pp1所指向的对象引用技术会从1变为0，
+	//从而导致被释放。
 
 
 	//shared_ptr<int> ps = makes(99);//99

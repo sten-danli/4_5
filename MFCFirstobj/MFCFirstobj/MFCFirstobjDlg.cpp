@@ -118,13 +118,12 @@ BOOL CMFCFirstobjDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 	
-	int* pint = new int();//这里泄露了4个字节。
-	int* pint2 = new int[2];//这里泄露了8个字节。
-	A a;
-	int alens = sizeof(a);//占用4个字节，成员函数是不占类的字节的,但是如果有成员变量将和类一起走。//例如类内加一个成员变量int，那么类的大小就变成了4个字节。
-
-	A* pa = new A();//这里泄露了1个字节。
-	A* pa2 = new A[2];//这里泄露了6个字节。
+	//i
+	//指针基础举例：
+	auto ppint1 = make_shared<int>(100);
+	auto ppint2 = make_shared<int>(100);
+	ppint1 = ppint2;
+	cout << "ppint1 指针数量为: " << ppint1.use_count() << " ppint2 指针数量为: " << ppint2.use_count() << endl;
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
