@@ -15,6 +15,16 @@ public:
 };
 ///////////////////////////////////////
 
+//写个函数模板来封装shared_ptr
+//返回一个智能指针，带着一个删除器default_delete <T[]>())；用(new T[size]new一个内存，size这么多的
+//数组元素。
+template<typename T>
+shared_ptr<T>make_shared_array( size_t size)
+{
+	return shared_ptr<T>(new T[size], default_delete <T[]>());
+	//return shared_ptr<T[]>(new T[size]);//不行
+}
+
 int main()
 {
 	//(2.1)unique();是否该智能指针独占某个指向的对象，也就是若只有一个智能指针指向某个对象，则unique返回true。
@@ -154,8 +164,12 @@ int main()
 	{
 		cout << defaultdelete2[i] << endl;
 	}
-
-
+	
+//2.9.3写个函数模板来封装shared_ptr
+	//封装举例在main外面，在这里调用。 
+	shared_ptr<int>pintArray = make_shared_array<int>(5);
+	shared_ptr<string>pintArray1 = make_shared_array<string>(5);
+	shared_ptr<A>pintArray2 = make_shared_array<A>(5);
 
 
 
