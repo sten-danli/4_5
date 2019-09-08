@@ -1,4 +1,5 @@
 #include<iostream>
+#include<vector>
 using namespace std;
 
 //shared ptr指定的删除器
@@ -15,7 +16,7 @@ public:
 };
 ///////////////////////////////////////
 
-//写个函数模板来封装shared_ptr
+/*本节课最重点：写个函数模板来封装shared_ptr*/
 //返回一个智能指针，带着一个删除器default_delete <T[]>())；用(new T[size]new一个内存，size这么多的
 //数组元素。
 template<typename T>
@@ -162,8 +163,9 @@ int main()
 
 	for (auto i = 0; i <= sizeof(defaultdelete2); i++)
 	{
-		cout << defaultdelete2[i] << endl;
+		cout << defaultdelete2[i] << " ";
 	}
+	cout << endl;
 	
 //2.9.3写个函数模板来封装shared_ptr
 	//封装举例在main外面，在这里调用。 
@@ -171,6 +173,35 @@ int main()
 	shared_ptr<string>pintArray1 = make_shared_array<string>(5);
 	shared_ptr<A>pintArray2 = make_shared_array<A>(5);
 
+	
+	//2.9.3.1指定删除器额外说明；
+	//就算是两个shared ptr指定了不同的删除器，只要他们所指向的对象类型相同，那么这两个
+	//shared ptr也属于同一个类型；
 
+	auto lamda1 = [](int* p)
+	{
+		//code...
+		delete p;
+	};
 
+	auto lamda2 = [](int* p)
+	{
+		//code...
+		delete p;
+	};
+	shared_ptr<int>plamda1(new int(100), lamda1);
+	shared_ptr<int>plamda2(new int(200), lamda2);
+	plamda2 = plamda1;//plamda2会先调用lamda2把自己所指向的对象释放，然后指向plamda1所指的对象,
+	//plamda1此时引用计数为2；整个main执行完后，还会用lamda1来释放lamda1和lamda2共同指向对象；
+
+	cout << "plamda1的指针计数为：" << plamda1.use_count()<<endl;//2
+	cout << "plamda2的指针计数为：" << plamda2.use_count() << endl;//2
+	plamda1.reset();
+	cout << "reset()后plamda1的指针计数为：" << plamda1.use_count() << endl;//0
+	cout << "reset()后plamda2的指针计数为：" << plamda2.use_count() << endl;//1
+
+	//类型相同，就代表可以放到元素类型为该对象类型的容器里来；
+	vector<shared_ptr<int>>pvector{ plamda1,plamda2 };
+
+	//make_shared是提倡的生成shared ptr的方法。但是make shared这种方法让我们没有办法指定自己的删除器。
 }
