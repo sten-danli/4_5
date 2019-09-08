@@ -6,6 +6,14 @@ void mydelete(string* p)//µ±ÖÇÄÜÖ¸ÕëÒıÓÃ¼ÆÊıÎª0£¬¾Í»á×Ô¶¯µ÷ÓÃ¸ÃÉ¾³ıÆ÷À´É¾³ı¶ÔÏó¡
 {
 	delete p;//¼ÈÈ»Äã×Ô¼ºÌá¹©ÁËÉ¾³ıÆ÷À´È¡´úÖÇÄÜÖ¸ÕëÈ±Ê¡É¾³ıÆ÷£¬Äã¾ÍÓĞÒåÎñÀ´×Ô¼ºÉ¾³ıËùÖ¸Ïò¶ÔÏó£¨µ±ÒıÓÃ¼ÆÊıÎª0Ê±£©
 }
+///////////////////////////////////////
+class A
+{
+public:
+	A(){}
+	~A(){}
+};
+///////////////////////////////////////
 
 int main()
 {
@@ -105,28 +113,47 @@ int main()
 	//ÎÒÃÇ¿ÉÒÔÖ¸¶¨×Ô¼ºµÄÉ¾³ıÆ÷È¡´úÏµÍ³µÄÄ¬ÈÏÉ¾³ıÆ÷£¬µ±ÖÇÄÜÖ¸ÕëĞèÒªÉ¾³ıËùÖ¸ÏòµÄ¶ÔÏóÊ±£¬
 	//±àÒëÆ÷»áµ÷ÓÃÎÒÃÇ×Ô¼º¶¨ÒåµÄÉ¾³ıÆ÷¡£
 	//shared ptrÖ¸¶¨µÄÉ¾³ıÆ÷·½·¨±È½Ï¼òµ¥£¬Ò»°ãÖ»ĞèÒªÔÚÊıÖĞÌí¼Ó¾ßÌåµÄÉ¾³ıÆ÷º¯ÊıµÄÃû¼´¿É¡£
-	shared_ptr<string>mydeletefunc(new string("yoyo"),mydelete);//ÕâÀï½«µ÷ÓÃ×Ô¼ºĞ´µÄmydeleteÉ¾³ıÆ÷¡£
+	/*
+	shared_ptr<string>mydeletefunc(new string("yoyo"),mydelete);//ÕâÀï½«µ÷ÓÃ×Ô¼ºĞ´µÄmydeleteÉ¾³ıÆ÷(mydeleteº¯ÊıÔÚmainÉÏÃæ£©
 	shared_ptr<string>mydeletefunc2(mydeletefunc);//Á½¸ö¶¼Ö¸Ïòstring yoyo£»
 	mydeletefunc2.reset();//±»ÊÍ·ÅÊ£ÏÂ1¸öÒıÓÃ¼ÆÊı£¬mydeletefunc2Îªnullptr
 	cout << mydeletefunc2.use_count() << endl;//0
 	mydeletefunc.reset();
 	cout << mydeletefunc.use_count() << endl;//0
+	*/
 
-	//É¾³ıÆ÷¿ÉÒÔ²»ÓÃº¯Êı·½·¨£¬Ò²¿ÉÒÔÊÇÓÃlamda±í´ïÊ½£º×¢Òâlamda±í´ïÊ½µÄĞ´·¨£»
+	//2.9.1 É¾³ıÆ÷¿ÉÒÔ²»ÓÃº¯Êı·½·¨£¬Ò²¿ÉÒÔÊÇÓÃlamda±í´ïÊ½£º×¢Òâlamda±í´ïÊ½µÄĞ´·¨£»
 	shared_ptr<string>mydeletefunc(new string("yoyo"), [](string* stringp) {
 		delete stringp;
-		
 		});
 
+	//ÓĞĞ©Çé¿ö£¬Ä¬ÈÏÉ¾³ıÆ÷´¦Àí²»ÁËµÄÊ±ºò£¨µ±ÓÃshared ptr¹ÜÀí¶¯Ì¬Êı×é£©£¬ĞèÒªÎÒÃÇÌá¹©Ö¸¶¨µÄÉ¾³ıÆ÷£ºÑİÊ¾ÈçÏÂ
+	//ÎÒÃÇnewÒ»¸öÊı×é£ºÈ»ºóÓÃlamda±í´ïÊ½É¾³ı£¬ÎÒÃÇºÜÉÙÓÃshared ptrÖĞÓÃÊı×é£¬ÒòÎªÓĞºÜ¶à´¦ÀíÊı×éµÄÈİÆ÷ºÜºÃÓÃ¡£
+	shared_ptr<int>plamda(new int[10], [](int* p) {
+		delete[]p;
+		});
 
+	//shared_ptr<A>pA(new A[10]);//ÕâÀïÏµÍ³³öÏÖÒì³££¬ÒòÎªÏµÍ³ÊÍ·ÅpAÊÇdelete pAËùÖ¸ÏòµÄÂãÖ¸Õë¶ø²»ÊÇ[]pA,
+	//ÕâÕâÖÖÇé¿öÏÂÎÒÃÇĞèÒªĞ´×Ô¼ºµÄÉ¾³ıÆ÷£¬ÈçÏÂ£º
+	shared_ptr<A>pAlamda(new A[10], [](A* p) {
+		delete[]p;
+		});
 
+	cout << "pAlamdaµÄÖ¸Õë¼ÆÊıÎª£º"<<pAlamda.use_count() << endl;
 
+	//2.9.2»¹¿ÉÒÔÓÃdefault deleteÀ´×öÉ¾³ıÆ÷£¬default deleteÊÇÓÃ±ê×¼¿âÀïµÄÄ£°åÀà¡£
+	shared_ptr<A>defaultdelete(new A[10], default_delete<A[]>());//¾ÉĞ´·¨
+	//A[]Õâ¸ö[]´ú±íÊı×é£¬ÎÒÃÇ×öµÄºÜ¶àµÄ¹¤×÷¾ÍÊÇÎªÁËÊı×éµÄÕı³£ÊÍ·Å£¬C×ßµ½17°æ±¾µÄÊ±ºòÎÒÃÇÒÑ¾­¿ÉÒÔ²»ÓÃÕâÑùĞ´£¬
+	//°´ÈçÏÂÔÚ¶¨ÒåÊı×éµÄÊ±ºò¼ÓÉÏÒ»¸ö[]¾Í¿ÉÒÔÁË:
+	shared_ptr<string[]>defaultdelete2(new string[10]);//ĞÂĞ´·¨£¬Èç¹ûÕâÑùĞ´±àÒëÆ÷¾ÍÖªµÀÄãÒªÉ¾³ıµÄÊÇÊı×é£¬¾Í²»×Ô¼ºĞ´É¾³ıÆ÷ÁË¡£shared_ptr<A[]>
+	defaultdelete2[0] = "i";
+	defaultdelete2[1] = "am";
+	defaultdelete2[2] = "c++ pro!";
 
-
-
-
-
-
+	for (auto i = 0; i <= sizeof(defaultdelete2); i++)
+	{
+		cout << defaultdelete2[i] << endl;
+	}
 
 
 
