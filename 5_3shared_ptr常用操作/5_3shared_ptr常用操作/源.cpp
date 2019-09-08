@@ -112,6 +112,13 @@ int main()
 	mydeletefunc.reset();
 	cout << mydeletefunc.use_count() << endl;//0
 
+	//删除器可以不用函数方法，也可以是用lamda表达式：注意lamda表达式的写法；
+	shared_ptr<string>mydeletefunc(new string("yoyo"), [](string* stringp) {
+		delete stringp;
+		
+		});
+
+
 
 
 
