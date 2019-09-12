@@ -1,27 +1,25 @@
 #include<iostream>
 using namespace std;
-
-
 shared_ptr<int>createO(int value)
 {
 	//return shared_ptr<int>(new int(value));
 	return make_shared<int>(value);//返回一个shared_ptr。
 }
-
 shared_ptr<int> myfunc(int value)
 {
 	
 	 shared_ptr<int>ptemp = createO(10);//离开作用域后ptemp会被释放，他所指向的内存也会被自动释放。
 	 return ptemp;
 }
-
 //auto myfunc(int value)//上面代码我试着写成了这样。
 //{
 //
 //	auto ptemp = createO(10);//离开作用域后ptemp会被释放，他所指向的内存也会被自动释放。
 //	return ptemp;
 //}
-//////////////////////////////////////////////////////////////////////////
+
+//(2.3)不要把类对象指针（this）作为shared ptr返回，改用enable_shared_from_this
+////////////////////////////////////////////////////////////////////////
 class TC:public enable_shared_from_this<TC>
 {
 public:
@@ -34,14 +32,46 @@ public:
 	}
 };
 //////////////////////////////////////////////////////////////////////////
+
+//(2.4)避免循环引用
+class CA;//声明一下CB
+class CB
+{
+public:
+	shared_ptr<CA> m_pas;
+	~CB()
+	{
+		int test = 1;
+	}
+};
+
+class CA
+{
+public:
+	shared_ptr<CB> m_pbs;
+	~CA()
+	{
+		int test = 1;
+	}
+};
+
 int main()
 {
+	//(2.4)避免循环引用
+	shared_ptr<CA> pca(new CA);
+	shared_ptr<CB> pcb(new CB);
+	pca->m_pbs = pcb;//等价于指向CB的对象有两个强引用
+	pcb->m_pas = pca; //等价于指向CA的对象有两个强引用
+	//要想成功释放我们需要把其中一个函数声明称weak ptr就可以了。
+
+
+
 	auto ptr = myfunc(12);
 	cout <<*ptr<< endl;
-
-//(2.2)慎用get（）返回的指针。
-	//返回智能指针指向的对象所对应的那裸指针（有些函数接口可能智能使用裸指针）
-	//get返回来的裸指针不能delete否则回异常.
+//
+////(2.2)慎用get（）返回的指针。
+//	//返回智能指针指向的对象所对应的那个指针（有些函数接口可能只能使用裸指针）
+//	//get返回来的裸指针不能delete否则回异常.
 	shared_ptr<int>myp(new int(100));
 	int* p = myp.get();//get在这里返回了myp指向的地址。
 	auto ps =myp.get();//get在这里返回了myp指向的地址。
@@ -73,11 +103,26 @@ int main()
 	//在我们调用shared from this()这个方法时，这个方法内部实际上调用了这个weak ptr的lock（）方法；
 	//大家都知道lock（）方法会让shared ptr指针计数+1,同时返回这个shared ptr，这个就是工作原理；
 
+//	//(2.4)避免循环引用：导致内存泄漏
 
+	//（3.2）移动语义
+	//shared_ptr<int>pp1 = make_shared<int>(100);
+	shared_ptr<int>pp1(new int(100));
+	shared_ptr<int>pp2(std::move(pp1));//移动语义，移动构造一个新的智能只针对象p2，
+	//p1就不再指向该对象（边为空）引用计数仍是1.
+	
+	shared_ptr<int>pp3;
+	pp3 = std::move(pp2);//移动赋值，p2指向空，p3指向该对象，整个对象引用计数仍为1.
 
+	//结论：移动肯定比复制要快；复制要增加引用计数，移动不需要，直接把左值当作右值来使用。
+		//移动构造函数快过复制构造函数，移动赋值运算符快过拷贝赋值运算符。
 
+//四：补充说明和使用建议
+	//分配器，解决内存分配问题；
+	/*shared_ptr<int>p((new int), mydeleter(), mymallocator<int());*/
 
-
-
+	//c)优先使用make_shared()
+	shared_ptr<string>ps1(new string("lidan is c++ pro!"));//分配两次内存
+	auto ps2= make_shared<string>("Lidan is c++pro!");//只分配一次内存
 	return 0;
 }
