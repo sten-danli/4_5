@@ -3,6 +3,9 @@
 using namespace std;
 
 
+#if 0
+
+
 
 //void myprint(const int &i, char *pmybuf)//线程函数  //我们希望把他作为一个线程入口//不建议用引用&
 void myprint(const int i, const string &pmybuf)//如果不加const在函数内可以更改pmybuf的内容并返回。
@@ -27,4 +30,29 @@ int main()
 	cout << "i am c++ pro!";//等待子线程完成打印。
 	return 0;
 
+}
+#endif // 0
+
+//复习3_16类型转换构造函数:主要能力是：它可以将某个其他数据类型转换成该类的类型对象;//其他数据类型(int),本类数据类型(Testint),类型对象(tint)。
+
+//a)只有一个参数，该参数又不是本类的const引用。(const &A),该参数其实就是带转换的数据类型。所以显然待转换的数据类型都不应该是本类类型。
+//b)在类型转换构造函数中，我们要指定装欢的方法(在这个函数中要干什么)；
+class Testint
+{
+public:
+	int m_i;
+	Testint(int x) :m_i(x)
+	{
+		if (x < 0) { m_i = 0; }
+		if (x > 100) { m_i = 100; }
+	}
+	friend ostream & operator<<(ostream&os, const Testint & t)//operator cout<< 方法。
+	{
+		return os << t.m_i << endl;
+	}
+};
+int main()
+{
+	Testint tint = 12;
+	cout << tint << endl;
 }
