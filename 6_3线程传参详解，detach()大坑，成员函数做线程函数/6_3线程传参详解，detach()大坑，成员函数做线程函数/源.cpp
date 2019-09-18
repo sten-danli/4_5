@@ -243,17 +243,24 @@ public:
 		return os << t.m_i << endl;
 	}
 
+public:
 	void thread_work(int num)//一个成员函数作为线程执行入口
 	{
 		cout << "[子线程thread_work执行] " << this << " thread_id = " << std::this_thread::get_id() << endl;
+	}
+	void operator()()
+	{
+		cout << "[子线程operator()()执行] " << this << " thread_id = " << std::this_thread::get_id() << endl;
 	}
 };
 
 
 int main()
 {
-	//用成员函数指针做线程函数,如何调用A类里面的thread_work函数。
+	//如何调用A类里面的thread_work函数。
 	A obja(10);
 	thread mythread(&A::thread_work,obja,15);//&A::thread_work 成员函数的名字前面给出成员函数所在地址，obja 然后是对象名，15线程入口的第一个参数。
+	thread mythread1(obja);//[子线程operator()()执行] 
 	mythread.join();
+	mythread1.join();
 }
