@@ -31,8 +31,15 @@ int main()
 	return 0;
 
 }
-
+#endif 0
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+#if 0
 //复习3_16类型转换构造函数:主要能力是：它可以将某个其他数据类型转换成该类的类型对象;//其他数据类型(int),本类数据类型(Testint),类型对象(tint)。
 
 //a)只有一个参数，该参数又不是本类的const引用。(const &A),该参数其实就是带转换的数据类型。所以显然待转换的数据类型都不应该是本类类型。
@@ -57,15 +64,14 @@ int main()
 	cout << tint << endl;
 }
 
-#endif 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#endif 0
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
 
-
-
+#if 0
 class A
 {
 public:
@@ -104,4 +110,150 @@ int main()//主进程
 	//终极结论：
 	//c）建议不使用detach（），只用join（）；这样就不存在局部变量失效导致线程对内存的非法引用问题。
 	return 0;
+}
+
+ #endif 0
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if 0
+
+
+
+//二：临时对象作为线程参数继续，老师常用测试方法；
+//（2.1）线程id概念，：id时个数字，每个线程（不管是主线程还是子线程）实际上都是对应只一个数字，而且每一个线程对应的数字都不同。
+//也就是说不同的线程，他的线程id数字必然是不同；
+//线程id可以用c++标准的函数来获取。std::this_thread::get_id()来获取；
+//(2.2）
+
+
+class A 
+{
+	
+public:
+	mutable int m_i;//mutable 不管在什么情况下我这个m_i这个类都能修改，即便是在一个const的函数中，代表常量的属性中我也能够修改m_i值。
+	A(int a) :m_i(a) 
+	{ 
+		cout << "A::A(int a)构造函数执行    " << this<<" thread_id = " <<std::this_thread::get_id << endl;
+		cout << endl;
+	}
+	A(const A& a) :m_i(a.m_i)
+	{ 
+		cout << "A::A(const A)拷贝构造函数执行    " << this << " thread_id = " << std::this_thread::get_id << endl;
+		cout << endl;
+	}
+	~A()
+	{
+		cout << "~A执行    " << this << " thread_id = " << std::this_thread::get_id() << endl;
+		cout << endl;
+	}
+	friend ostream& operator<<(ostream& os, const A& t)//operator cout<< 方法。
+	{
+		return os << t.m_i << endl;
+	}
+};
+
+void myprint2(const A& pmybuf)
+{
+	pmybuf.m_i = 199;//因为上面声明了mutable所以这里即使是const依然可以改变。//线程里m_i=199;改变但无法反馈到调用函数,要用std::ref
+
+	cout << "子线程myprint2的参数地址是：    " << &myprint2 << "thread_id = " << std::this_thread::get_id() << endl;
+	cout << endl;
+	cout <<"子线程修改的m_i的值为: "<< pmybuf.m_i << endl;
+	cout << endl;
+}
+
+
+
+int main()
+{
+	
+	/*cout << "主线程id thread_id是: " << this_thread::get_id() << endl;
+	cout << endl;
+	
+	int myvar = 23;
+	thread mythread(myprint2,A(myvar));*/
+	
+	A myobject(10);//生成一个对象；
+	thread mythread(myprint2, std::ref(myobject));
+	cout << endl;
+	cout<<"主线程m_i: "<<myobject;
+	mythread.join();
+	//mythread.detach();
+	//mythread.detach();//使用时未执行子进程
+//
+//	主线程												   thread_id = 5892
+//	A::A(int a)				构造函数执行	this:010FF644, thread_id = 005B15AF
+//	A::A(const A)			拷贝构造函数执行this:014FF170, thread_id = 005B15AF
+//	~A执行									this:010FF644, thread_id = 5892
+
+
+}
+#endif // 0
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//三.传递对象，智能指针作为线程参数
+#if 0
+
+
+
+
+void myprintptr(unique_ptr<int>pzn)
+{
+	cout << "myprintptr子线程 " << endl;
+}
+
+
+int main()
+{
+	cout << "主线程 " << endl;
+	unique_ptr<int>myp(new int(100));
+	thread mythread(myprintptr, std::move(myp));
+	mythread.join();
+}
+#endif // 0
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//四:用成员函数指针做线程函数//可以指定任意一个成员函数作为线程的入口函数
+
+class A
+{
+
+public:
+	mutable int m_i;//mutable 不管在什么情况下我这个m_i这个类都能修改，即便是在一个const的函数中，代表常量的属性中我也能够修改m_i值。
+	A(int a) :m_i(a)
+	{
+		cout << "A::A(int a)构造函数执行    " << this << " thread_id = " << std::this_thread::get_id << endl;
+		cout << endl;
+	}
+	A(const A& a) :m_i(a.m_i)
+	{
+		cout << "A::A(const A)拷贝构造函数执行    " << this << " thread_id = " << std::this_thread::get_id << endl;
+		cout << endl;
+	}
+	~A()
+	{
+		cout << "~A执行    " << this << " thread_id = " << std::this_thread::get_id() << endl;
+		cout << endl;
+	}
+	friend ostream& operator<<(ostream& os, const A& t)//operator cout<< 方法。
+	{
+		return os << t.m_i << endl;
+	}
+
+	void thread_work(int num)//一个成员函数作为线程执行入口
+	{
+		cout << "[子线程thread_work执行] " << this << " thread_id = " << std::this_thread::get_id() << endl;
+	}
+};
+
+
+int main()
+{
+	//用成员函数指针做线程函数,如何调用A类里面的thread_work函数。
+	A obja(10);
+	thread mythread(&A::thread_work,obja,15);//&A::thread_work 成员函数的名字前面给出成员函数所在地址，obja 然后是对象名，15线程入口的第一个参数。
+	mythread.join();
 }
