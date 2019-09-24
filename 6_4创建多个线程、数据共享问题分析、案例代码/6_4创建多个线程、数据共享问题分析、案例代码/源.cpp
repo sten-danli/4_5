@@ -210,28 +210,45 @@ public:
 		{
 			
 			cout << "inMsgRecvQueue()执行，插入元素：" <<i<< endl;
-			mymutex.lock();
-			MsgRecvQueue.push_back(i);
-			mymutex.unlock();
+			
+		//总结：std::lock();一次锁定多个互斥量；谨慎使用，建议一个一个的锁；
+		//mymutex1.lock();//方法1//完全手动lock() & unloc();
+		//mymutex2.lock();
 
+		//std::lock_guard<std::mutex>mutex_gard1(mymutex11);//方法2//可以自动unlock()；但是不能解决锁死问题于是发明出了方法4，既能自动解决锁死问题又能自己解决unlock()问题；
+		//std::lock_guard<std::mutex>mutex_gard2(mymutex12);
+	
+		//std::lock(mymutex1, mymutex2);//方法3//遗憾的是不能自动unlock();
+
+			std::lock(mymutex1, mymutex2);//方法4,但是要和方法三一起用，事先写好方法3；既能自动解决锁死问题又能自己解决unlock()问题；
+			std::lock_guard<std::mutex>guard1(mymutex1, std::adopt_lock);
+			std::lock_guard<std::mutex>guard2(mymutex2, std::adopt_lock);
+
+			MsgRecvQueue.push_back(i);
+			//mymutex1.unlock();
+			//mymutex2.unlock();
 		}
 		return;
 	}
-	bool feedback(int& commando)
+	bool outMsgLULProc(int &commando)
 	{
-		mymutex.lock();
-		//std::lock_guard<std::mutex>mutex_gard(mymutex);
+		//std::lock_guard<std::mutex>mutex_gard1(mymutex11);
+		//std::lock_guard<std::mutex>mutex_gard2(mymutex12);
+		mymutex1.lock();
+		mymutex2.lock();
+	
 		if (!MsgRecvQueue.empty())
 		{
 			commando = MsgRecvQueue.front();
 			MsgRecvQueue.pop_front();
-			mymutex.unlock();
+			mymutex1.unlock();
+			mymutex2.unlock();
 			return true;
-
 		}
 		else
 		{
-			mymutex.unlock();
+			mymutex1.unlock();
+			mymutex2.unlock();
 			return false;
 		}
 	}
@@ -240,11 +257,11 @@ public:
 		int commando = 0;
 		for (int i = 0; i < 1000; ++i)
 		{
-			bool result = feedback(commando);
+			bool result = outMsgLULProc(commando);
 			if (result == true)
 			{
 				cout << "outMsgRecvQueue()执行，取出一个元素" << commando << endl;
-				//Do somthing...
+				//Do something...
 				//可以考虑进行数据处理
 			}
 			else
@@ -256,7 +273,8 @@ public:
 	}
 private:
 	list<int>MsgRecvQueue;
-	mutex mymutex;
+	mutex mymutex1;
+	mutex mymutex2;
 };
 int main()
 {
