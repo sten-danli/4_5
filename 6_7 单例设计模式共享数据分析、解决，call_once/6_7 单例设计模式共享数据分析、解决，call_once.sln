@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6_7 单例设计模式共享数据分析、解决，call_once", "6_7 单例设计模式共享数据分析、解决，call_once\6_7 单例设计模式共享数据分析、解决，call_once.vcxproj", "{52B1317F-BECF-467E-9B99-CFE821038717}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Debug|x64.ActiveCfg = Debug|x64
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Debug|x64.Build.0 = Debug|x64
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Debug|x86.ActiveCfg = Debug|Win32
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Debug|x86.Build.0 = Debug|Win32
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Release|x64.ActiveCfg = Release|x64
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Release|x64.Build.0 = Release|x64
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Release|x86.ActiveCfg = Release|Win32
+		{52B1317F-BECF-467E-9B99-CFE821038717}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6A951A0B-5794-46B7-846F-111E652900BB}
+	EndGlobalSection
+EndGlobal
