@@ -1,5 +1,7 @@
 #include<iostream>
 using namespace std;
+//泛化的意思就是模板中的typename T类型的参数全部用上，而全特化就是所有typename的参数全部显示给出，而特化版本的前提是要有
+//先泛化版本。
 
 //一：类模板特化：必须先有泛化版本。只要设计特化，一定存在泛化：
 //特化版本代码编译器会优先选择。
@@ -7,7 +9,7 @@ using namespace std;
 //对应1*
 //二：单独特化成员函数而不是模板
 
-//1.泛化版本的TU类模板。
+//1.泛化版本的TC类模板。
 template <typename T, typename U>
 struct TC
 {
